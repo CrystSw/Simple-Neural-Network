@@ -152,7 +152,7 @@ void test(void){
 	}
 	fclose(rbp);
 	
-	//錯乱行列
+	//混同行列
 	double **confmat;
 	confmat = (double**)calloc(td.label.size, sizeof(double*));
 	for(j = 0; j < td.label.size; ++j){
