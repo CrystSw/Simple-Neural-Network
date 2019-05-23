@@ -166,7 +166,7 @@ void test(void){
 	
 	//カテゴリ分類
 	int m_category;
-	for(i = 0; i < td.fval.num; i++){
+	for(i = 0; i < td.fval.num; ++i){
 		//ニューラルネットワークの出力を計算
 		catout = nncout_test(td, weight, bias, i);
 		//カテゴリ事後確率の導出
@@ -198,8 +198,8 @@ void test(void){
 	
 	//混同行列の出力
 	puts("-----Confusion Matrix-----");
-	for(i = 0; i < td.label.size; i++){
-		for(j = 0; j < td.label.size; j++){
+	for(i = 0; i < td.label.size; ++i){
+		for(j = 0; j < td.label.size; ++j){
 			printf("%3.1f   ", confmat[i][j]*100);
 		}
 		putchar('\n');
