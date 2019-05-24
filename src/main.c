@@ -103,8 +103,8 @@ void learn(void){
 	}
 	fclose(wbp);
 	
-	for(i = 0; i < td.fval.size; ++i) free(weight[i]);
-	for(i = 0; i < td.label.size; ++i) free(weight);
+	for(i = 0; i < td.label.size; ++i) free(weight[i]);
+	free(weight);
 	free(bias);
 }
 
@@ -205,9 +205,10 @@ void test(void){
 		putchar('\n');
 	}
 	
-	for(i = 0; i < td.fval.size; ++i) free(weight[i]);
-	for(i = 0; i < td.label.size; ++i) free(weight);
+	for(i = 0; i < td.label.size; ++i) free(weight[i]);
+	free(weight);
 	free(bias);
-	for(i = 0; i < td.fval.size; ++i) free(confmat[i]);
-	for(i = 0; i < td.label.size; ++i) free(confmat);
+	
+	for(i = 0; i < td.label.size; ++i) free(confmat[i]);
+	free(confmat);
 }

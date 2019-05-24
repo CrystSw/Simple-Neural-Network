@@ -98,6 +98,8 @@ LABELOHV read_mnistlbl_ohv(char *filename) {
  * @return - ラベルデータ
  */
 LABEL read_mnistlbl(char *filename) {
+	int i;
+	
 	LABEL label;
 	FILE *mnistlbl;
 	//ラベルデータのロード
@@ -115,7 +117,7 @@ LABEL read_mnistlbl(char *filename) {
 	label.size = 10;
 	//ラベルデータの読み込み
 	label.data = (u_char*)malloc(sizeof(u_char)*label.num);
-	for(int i = 0; i < label.num; ++i){
+	for(i = 0; i < label.num; ++i){
 		if(fread(&label.data[i], sizeof(u_char), 1, mnistlbl) != 1){
 			fprintf(stderr, "Error: Invalid file format.");
 			exit(1);
@@ -135,8 +137,10 @@ LABEL read_mnistlbl(char *filename) {
  * @return - ソフトマックス値
  */
 double softmax(const double *output, const int id, const int size){
+	int i;
+	
 	double denom = 0.0;
-	for(int i = 0; i < size; ++i){
+	for(i = 0; i < size; ++i){
 		denom += exp(output[i]);
 	}
 	return exp(output[id]) / denom;
@@ -151,8 +155,10 @@ double softmax(const double *output, const int id, const int size){
  * @return - クロスエントロピー値
  */
 double cross_entropy(const double *rpp, const double *wpp, const int size){
+	int i;
+	
 	double cross_emt = 0.0;
-	for(int i = 0; i < size; ++i){
+	for(i = 0; i < size; ++i){
 		//カテゴリ事後確率が0の場合，log0が計算できないので，double型の最小値dbl_min(>0)で計算
 		cross_emt += -rpp[i]*log((wpp[i] != 0 ? wpp[i] : DBL_MIN));
 	}
@@ -167,8 +173,10 @@ double cross_entropy(const double *rpp, const double *wpp, const int size){
  * @return - インデックス
  */
 int getmax(const double *p, int size){
+	int i;
+	
 	int max = 0;
-	for(int i = 1; i < size; ++i){
+	for(i = 1; i < size; ++i){
 		if(p[i] > p[max]) max = i;
 	}
 	return max;
