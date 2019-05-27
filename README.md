@@ -18,7 +18,7 @@ This CNN consists of 2-layer(input-layer, output-layer). not exist hidden-layer.
 
 Windows10 64bit(gcc 6.3.0)とCentOS6.10(gcc 4.4.7)で動作確認を行っています．  
 コンパイルを行うには次のコマンドを実行します．  
-```gcc -lm snnet.c main.c -o snnet```
+```gcc -lm snnet.c main.c -o snnet```  
 最適化オプションを付けたほうが，動作は早くなります．  
 
 教師データを基に学習を行うには次のコマンドを実行します．  
