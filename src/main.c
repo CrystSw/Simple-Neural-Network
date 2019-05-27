@@ -5,7 +5,7 @@
 #include "snnet.h"
 
 #define LOSS_CALC_RATE	5000
-#define OUTPUT_IMAGE	1
+//#define OUTPUT_IMAGE
 
 void learn(void);
 void test(void);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
  * 最終的な重みとバイアスは外部ファイルとして保存される．
  */
 void learn(void){
-	int i,j,k;
+	int i, j, k;
 	
 	//訓練データの読み込み
 	TRAINDATA td;
@@ -57,25 +57,23 @@ void learn(void){
 	//学習
 	for(i = 0; i < td.fval.num; ++i){
 		//ニューラルネットワークの出力を計算
-		catout = nncout(td, weight, bias, i);
+		nncout_train(td, weight, bias, i, catout);
 		//カテゴリ事後確率の導出
-		catpp = nncpp(catout, td.label.size);
-		//重みの更新
+		nncpp(catout, td.label.size, catpp);
+		//更新
 		for(j = 0; j < td.label.size; ++j){
+			//重みの更新
 			for(k = 0; k < td.fval.size; ++k){
 				weight[j][k] += alpha*((td.label.data[i][j]-catpp[j])*td.fval.data[i][k]);
 			}
-		}
-		//バイアスの更新
-		for(j = 0; j < td.label.size; ++j){
+			//バイアスの更新
 			bias[j] += alpha*(td.label.data[i][j]-catpp[j]);
 		}
 		//クロスエントロピーの総和
 		if((i+1) % LOSS_CALC_RATE == 0) printf("Data: %6d, Loss: %.8f\n", i+1, xentrloss(td, weight, bias));
-		
-		free(catout);
-		free(catpp);
 	}
+	free(catout);
+	free(catpp);
 	
 	//重みの書き出し
 	FILE *wwp;
@@ -109,7 +107,7 @@ void learn(void){
 }
 
 void test(void){
-	int i,j,k;
+	int i, j, k;
 	
 	//学習データの読みこみ
 	TESTDATA td;
@@ -168,15 +166,15 @@ void test(void){
 	int m_category;
 	for(i = 0; i < td.fval.num; ++i){
 		//ニューラルネットワークの出力を計算
-		catout = nncout_test(td, weight, bias, i);
+		nncout_test(td, weight, bias, i, catout);
 		//カテゴリ事後確率の導出
-		catpp = nncpp(catout, td.label.size);
+		nncpp(catout, td.label.size, catpp);
 		//事後確率が最大であるカテゴリを導出
 		m_category = getmax(catpp, td.label.size);
 		confmat[td.label.data[i]][m_category] += 1;
 		printf("[Data:%d]right:%d predict:%d(pp:%.1f)\n", i+1, td.label.data[i], m_category, catpp[m_category]*100);
-		//誤った画像の表示
 #ifdef OUTPUT_IMAGE
+		//誤った画像の表示
 		if(td.label.data[i] != m_category){
 			puts("-----Image-----");
 			for(j = 0; j < td.fval.size; ++j){
@@ -185,9 +183,10 @@ void test(void){
 			}
 		}
 #endif
-		free(catout);
-		free(catpp);
 	}
+	free(catout);
+	free(catpp);
+	
 	//混同行列の計算
 	int cat_num;
 	for(i = 0; i < td.label.size; ++i){
@@ -198,7 +197,11 @@ void test(void){
 	
 	//混同行列の出力
 	puts("-----Confusion Matrix-----");
+	printf("   ");
+	for(i = 0; i < td.label.size; ++i) printf("%4d  ", i);
+	putchar('\n');
 	for(i = 0; i < td.label.size; ++i){
+		printf("%d: ", i);
 		for(j = 0; j < td.label.size; ++j){
 			printf("%3.1f   ", confmat[i][j]*100);
 		}

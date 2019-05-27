@@ -8,7 +8,7 @@
 /**
  * mnistの画像データをロードする．
  *
- * @arg filename - ファイル名
+ * @param filename - ファイル名
  * @return - 特徴量データ
  */
 FVALUE read_mnistimg(char *filename) {
@@ -33,8 +33,8 @@ FVALUE read_mnistimg(char *filename) {
 	fval.size = fval.r_size*fval.c_size;
 	//画像データの読み込み
 	fval.data = (u_char**)malloc(sizeof(u_char*)*fval.num);
-	for(i = 0; i < fval.num; ++i) fval.data[i] = (u_char*)malloc(sizeof(u_char)*fval.size);
 	for(i = 0; i < fval.num; ++i){
+		fval.data[i] = (u_char*)malloc(sizeof(u_char)*fval.size);
 		for(j = 0; j < fval.size; ++j){
 			if(fread(&fval.data[i][j], sizeof(u_char), 1, mnistimg) != 1){
 				fprintf(stderr, "Error: Invalid file format.");
@@ -51,7 +51,7 @@ FVALUE read_mnistimg(char *filename) {
  * mnistのラベルデータをロードする．
  * この関数はラベルデータをone-hot-vector形式で読み込む．
  *
- * @arg filename - ファイル名
+ * @param filename - ファイル名
  * @return - ラベルデータ(one-hot-vector形式)
  */
 LABELOHV read_mnistlbl_ohv(char *filename) {
@@ -74,10 +74,10 @@ LABELOHV read_mnistlbl_ohv(char *filename) {
 	label.size = 10;	//カテゴリ数
 	//ラベルデータの読み込み
 	label.data = (double**)malloc(sizeof(double*)*label.num);
-	for(i = 0; i < label.num; ++i) label.data[i] = (double*)malloc(sizeof(double)*label.size);
 	//one-hot-vector形式へ変換
 	u_char category;
 	for(i = 0; i < label.num; ++i){
+		label.data[i] = (double*)malloc(sizeof(double)*label.size);
 		if(fread(&category, sizeof(u_char), 1, mnistlbl) != 1){
 			fprintf(stderr, "Error: Invalid file format.");
 			exit(1);
@@ -94,7 +94,7 @@ LABELOHV read_mnistlbl_ohv(char *filename) {
 /**
  * mnistのラベルデータをロードする．
  *
- * @arg filename - ファイル名
+ * @param filename - ファイル名
  * @return - ラベルデータ
  */
 LABEL read_mnistlbl(char *filename) {
@@ -131,9 +131,9 @@ LABEL read_mnistlbl(char *filename) {
 /**
  * ソフトマックス値を計算する．
  *
- * @arg catout - ソフトマックス値の計算に用いる数値が格納された配列
- * @arg id - ソフトマックス値を計算したい数値のインデックス
- * @arg size - 要素数
+ * @param catout - ソフトマックス値の計算に用いる数値が格納された配列
+ * @param id - ソフトマックス値を計算したい数値のインデックス
+ * @param size - 要素数
  * @return - ソフトマックス値
  */
 double softmax(const double *output, const int id, const int size){
@@ -149,9 +149,9 @@ double softmax(const double *output, const int id, const int size){
 /**
  * クロスエントロピー値を計算する．
  *
- * @arg rpp - 真の確率分布
- * @arg wpp - 誤った確率分布
- * @arg size - 要素数
+ * @param rpp - 真の確率分布
+ * @param wpp - 誤った確率分布
+ * @param size - 要素数
  * @return - クロスエントロピー値
  */
 double cross_entropy(const double *rpp, const double *wpp, const int size){
@@ -168,8 +168,8 @@ double cross_entropy(const double *rpp, const double *wpp, const int size){
 /**
  * 配列内で最も値の大きい要素のインデックスを取得する．
  *
- * @arg p - 配列
- * @arg size - 要素数
+ * @param p - 配列
+ * @param size - 要素数
  * @return - インデックス
  */
 int getmax(const double *p, int size){
@@ -183,20 +183,16 @@ int getmax(const double *p, int size){
 }
 
 /**
- * ある特徴量を入力した際のニューラルネットワークの出力を計算する．
- * この関数の処理結果として得られたポインタは，必ずfree関数を用いて解放してください．
+ * ある特徴量を入力した際のニューラルネットワークの出力を計算する．(教師データ用)
  *
- * @arg td - 教師データ
- * @arg weight - 重みデータ
- * @arg bias - バイアスデータ
- * @arg id - 計算に用いる教師データのインデックス
- * @return - 各ニューロンの出力が格納された配列(double配列へのポインタ)
+ * @param td - 教師データ
+ * @param weight - 重みデータ
+ * @param bias - バイアスデータ
+ * @param id - 計算に用いる教師データのインデックス
+ * @param catout - 各ニューロンの出力が格納された配列(出力)
  */
-double *nncout(const TRAINDATA td, double **weight, const double *bias, const int id){
+void nncout_train(const TRAINDATA td, double **weight, const double *bias, const int id, double *catout){
 	int i, j;
-	
-	double *catout;
-	catout = (double*)malloc(sizeof(double)*td.label.size);
 	
 	for(i = 0; i < td.label.size; ++i){
 		catout[i] = 0;
@@ -205,24 +201,19 @@ double *nncout(const TRAINDATA td, double **weight, const double *bias, const in
 		}
 		catout[i] += bias[i];
 	}
-	return catout;
 }
 
 /**
- * ある特徴量を入力した際のニューラルネットワークの出力を計算する．
- * この関数の処理結果として得られたポインタは，必ずfree関数を用いて解放してください．
+ * ある特徴量を入力した際のニューラルネットワークの出力を計算する．(テストデータ用)
  *
- * @arg td - テストデータ
- * @arg weight - 重みデータ
- * @arg bias - バイアスデータ
- * @arg id - 計算に用いる教師データのインデックス
- * @return - 各ニューロンの出力が格納された配列(double配列へのポインタ)
+ * @param td - テストデータ
+ * @param weight - 重みデータ
+ * @param bias - バイアスデータ
+ * @param id - 計算に用いる教師データのインデックス
+ * @param catout - 各ニューロンの出力が格納された配列(出力)
  */
-double *nncout_test(const TESTDATA td, double **weight, const double *bias, const int id){
+void nncout_test(const TESTDATA td, double **weight, const double *bias, const int id, double *catout){
 	int i, j;
-	
-	double *catout;
-	catout = (double*)malloc(sizeof(double)*td.label.size);
 	
 	for(i = 0; i < td.label.size; ++i){
 		catout[i] = 0;
@@ -231,35 +222,30 @@ double *nncout_test(const TESTDATA td, double **weight, const double *bias, cons
 		}
 		catout[i] += bias[i];
 	}
-	return catout;
 }
 
 /**
  * ニューラルネットワークの出力を基にカテゴリ事後確率の計算を行う．
  * この関数の処理結果として得られたポインタは，必ずfree関数を用いて解放してください．
  *
- * @arg catout - 各ニューロンの出力が格納された配列
- * @arg size - カテゴリ数
- * @return - カテゴリ事後確率各が格納された配列(double配列へのポインタ)
+ * @param catout - 各ニューロンの出力が格納された配列
+ * @param size - カテゴリ数
+ * @param catcpp - カテゴリ事後確率各が格納された配列(出力)
  */
-double *nncpp(const double *catout, const int size){
+void nncpp(const double *catout, const int size, double *catpp){
 	int i;
-	
-	double *catpp;
-	catpp = (double*)malloc(sizeof(double)*size);
 	
 	for(i = 0; i < size; ++i){
 		catpp[i] = softmax(catout, i, size);
 	}
-	return catpp;
 }
 
 /**
  * クロスエントロピーの総和を計算する．
  *
- * @arg td - 教師データ
- * @arg weight - 重みデータ
- * @arg bias - バイアスデータ
+ * @param td - 教師データ
+ * @param weight - 重みデータ
+ * @param bias - バイアスデータ
  * @return - クロスエントロピーの総和
  */
 double xentrloss(const TRAINDATA td, double **weight, const double *bias){
@@ -267,17 +253,18 @@ double xentrloss(const TRAINDATA td, double **weight, const double *bias){
 	
 	double loss = 0;
 	double *catout, *catpp;
+	catout = (double*)malloc(sizeof(double)*td.label.size);
+	catpp = (double*)malloc(sizeof(double)*td.label.size);
 	
 	for(i = 0; i < td.fval.num; ++i){
 		//ニューラルネットワークの出力を計算
-		catout = nncout(td, weight, bias, i);
+		nncout_train(td, weight, bias, i, catout);
 		//カテゴリ事後確率の導出
-		catpp = nncpp(catout, td.label.size);
+		nncpp(catout, td.label.size, catpp);
 		//クロスエントロピーの計算
 		loss += cross_entropy(td.label.data[i], catpp, td.label.size);
-		
-		free(catout);
-		free(catpp);
 	}
+	free(catout);
+	free(catpp);
 	return loss;
 }
