@@ -16,15 +16,15 @@ This CNN consists of 2-layer(input-layer, output-layer). not exist hidden-layer.
 
 の4つのファイルをダウンロードおよび解凍し，src/mnistの中へ入れてください．  
 
-このプログラムは，『Windows10 64bit』『GCC version 6.3.0』の下で動作確認を行っています．  
+Windows10 64bit(gcc 6.3.0)とCentOS6.10(gcc 4.4.7)で動作確認を行っています．  
 コンパイルを行うには次のコマンドを実行します．  
 ```gcc -lm snnet.c main.c -o snnet```
 
 教師データを基に学習を行うには次のコマンドを実行します．  
-```./snnet.exe learn```
+```./snnet learn```
 
 テストデータを基に識別を行うには次のコマンドを実行します．  
-```./snnet.exe test```
+```./snnet test```
 
 ---
 ## 注意事項
