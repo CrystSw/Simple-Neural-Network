@@ -17,7 +17,7 @@ This CNN consists of 2-layer(input-layer, output-layer). not exist hidden-layer.
 の4つのファイルをダウンロードおよび解凍し，src/mnistの中へ入れてください．  
 
 Windows10 64bit(gcc 6.3.0)とCentOS6.10(gcc 4.4.7)で動作確認を行っています．  
-###ver1.1以前(旧バージョン)
+**ver1.1以前(旧バージョン)**  
 コンパイルを行うには次のコマンドを実行します．  
 ```gcc -lm snnet.c main.c -o snnet```  
 最適化オプションを付けたほうが，動作は早くなります．  
@@ -26,8 +26,8 @@ Windows10 64bit(gcc 6.3.0)とCentOS6.10(gcc 4.4.7)で動作確認を行ってい
 ```./snnet learn```
 
 テストデータを基に識別を行うには次のコマンドを実行します．  
-```./snnet test```
-###ver1.2以降(新バージョン)
+```./snnet test```  
+**ver1.2以降(新バージョン)**  
 コンパイルを行うには次のコマンドを実行します．  
 ```gcc -lm nnet.c util.c mnist.c main.c -o snnet```  
 最適化オプションを付けたほうが，動作は早くなります．  
