@@ -80,6 +80,10 @@ void learn(void){
 	free_d1(bias);
 }
 
+/**
+ * 学習したニューラルネットワークを用いてテストデータの分類を行う．
+ * 結果は混同行列として出力される．
+ */
 void test(void){
 	int i, j, k;
 	
