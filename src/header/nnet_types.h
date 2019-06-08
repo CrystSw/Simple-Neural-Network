@@ -1,3 +1,6 @@
+#ifndef __SNN_NNET_TYPES_H_INCLUDED__
+#define __SNN_NNET_TYPES_H_INCLUDED__
+
 typedef unsigned char u_char;
 
 typedef struct {
@@ -29,3 +32,5 @@ typedef struct{
 	FVALUE fval;
 	LABEL label;
 } TESTDATA;
+
+#endif
