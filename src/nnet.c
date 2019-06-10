@@ -86,7 +86,6 @@ void nncout_test(const TESTDATA td, double **weight, const double *bias, const i
 
 /**
  * ニューラルネットワークの出力を基にカテゴリ事後確率の計算を行う．
- * この関数の処理結果として得られたポインタは，必ずfree関数を用いて解放してください．
  *
  * @param catout - 各ニューロンの出力が格納された配列
  * @param size - カテゴリ数
